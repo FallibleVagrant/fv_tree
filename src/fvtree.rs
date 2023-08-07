@@ -50,6 +50,19 @@ pub struct PrintableFvtree {
 use std::convert::TryFrom;
 
 impl PrintableFvtree {
+    //Put down the root of all fvtrees, which looks like this:
+    //
+    //    O
+    //   /|\
+    //
+    //Puts it below the x-axis so building proper starts at (0, 0).
+    fn put_down_root(canvas: &mut text_canvas::Canvas) {
+        canvas.put(Point {x: 0, y: -1}, 'O');
+        canvas.put(Point {x: -1, y: -2}, '/');
+        canvas.put(Point {x: 0, y: -2}, '|');
+        canvas.put(Point {x: 1, y: -2}, '\\');
+    }
+
     pub fn build(tree: &Fvtree) -> Result<PrintableFvtree, &'static str> {
         let mut cursor = Point {
             x: 0,
@@ -64,6 +77,8 @@ impl PrintableFvtree {
             sticks.push(stick);
         }
 
+        PrintableFvtree::put_down_root(&mut canvas);
+
         let mut branch_points: Vec<Point> = Vec::new();
 
         for stick in sticks {
@@ -71,6 +86,7 @@ impl PrintableFvtree {
             if stick.is_control_char() {
                 match stick {
                     Stick::BranchIndicator => {
+//println!("Putting branch down at {:?}.", cursor);
 canvas.put(cursor, 'Y');
                         branch_points.push(cursor);
                     },
@@ -84,6 +100,7 @@ canvas.put(cursor, 'Y');
                 let cursor_move = stick.cursor_move()?;
 
                 if !canvas.is_char_point(cursor, 'Y') {
+//println!("Overwriting at {:?} with {}", cursor, stick.to_char());
                     canvas.put(cursor, stick.to_char());
                 }
                 cursor += cursor_move;

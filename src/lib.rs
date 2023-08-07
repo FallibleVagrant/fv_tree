@@ -3,6 +3,7 @@ pub mod fvtree;
 mod sticks;
 mod text_canvas;
 
+/*
 use std::env;
 use std::error::Error;
 use std::fs;
@@ -99,3 +100,4 @@ Trust me.";
         );
     }
 }
+*/

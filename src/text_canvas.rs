@@ -5,7 +5,8 @@ use crate::common::Point;
 pub struct Canvas {
     canvas: Vec<Vec<char>>,
     //Change where the origin is located within the vec,
-    //cannot be negative.
+    //for the sake of simplicity, cannot be negative,
+    //and only adjusts for negative values, since we have a lot of positive space anyways.
     x_offset: usize,
     y_offset: usize,
 }
@@ -21,6 +22,9 @@ impl Canvas {
     //Say it is negative, the offset will translate it to positive or zero.
     //Useful for accessing where it will actually be placed in the vec.
     //Keep in mind this is only for one axis.
+    //
+    //Also might want to run is_point_within_offset before using this. Doesn't work well when points are
+    //still negative after offset.
     fn calc_vec_index(point: i32, offset: usize) -> usize {
         let i: usize;
         if point.is_positive() {
@@ -128,10 +132,23 @@ impl Canvas {
         row[x_index] = c;
     }
 
+    //Check if point >= 0 when offset is added,
+    //i.e., point values aren't negative for calc_vec_index.
+    fn is_point_within_offset(&self, point: Point) -> bool {
+        return ((point.x.is_negative() && point.x.abs() as usize > self.x_offset)
+                && (point.y.is_negative() && point.y.abs() as usize > self.y_offset))
+
+                || (point.x >= 0 && point.y >= 0);
+    }
+
     ///Check if a point in the canvas is blank.
     ///Returns true if the point is off-canvas.
     pub fn is_blank_point(&self, point: Point) -> bool {
-        if (point.x.is_negative() && point.x.abs() as usize > self.x_offset) || (point.y.is_negative() && point.y.abs() as usize > self.y_offset) {return false;}
+        //Check we don't get negative values for calc_vec_index.
+        if !self.is_point_within_offset(point) {
+            return false;
+        }
+
         let x_index: usize = Canvas::calc_vec_index(point.x, self.x_offset);
         let y_index: usize = Canvas::calc_vec_index(point.y, self.y_offset);
 
@@ -152,7 +169,11 @@ impl Canvas {
 
     ///Check if a point in the canvas is the specified char.
     pub fn is_char_point(&self, point: Point, c: char) -> bool {
-        if (point.x.is_negative() && point.x.abs() as usize > self.x_offset) || (point.y.is_negative() && point.y.abs() as usize > self.y_offset) {return false;}
+        //Check we don't get negative values for calc_vec_index.
+        if !self.is_point_within_offset(point) {
+            return false;
+        }
+
         let x_index: usize = Canvas::calc_vec_index(point.x, self.x_offset);
         let y_index: usize = Canvas::calc_vec_index(point.y, self.y_offset);
 
@@ -317,6 +338,7 @@ mod text_canvas_tests {
     fn char_is_present_check() {
         let mut canvas = Canvas::new();
         canvas.put(Point {x: 2, y: 3}, 'x');
-        assert!(canvas.is_char_point(Point {x: 2, y: 3}, 'x'));
+        let output = canvas.is_char_point(Point {x: 2, y: 3}, 'x');
+        assert!(output);
     }
 }
