@@ -2,11 +2,11 @@ Q: What does it do?
 
 A: It generates beautiful\* UTF-8\*\* trees\*\*\*.
 
-\*Trees at the moment are not, in fact, beautiful.
+\*Trees are not, in fact, beautiful.
 
 \*\*Specification in development.
 
-\*\*\*The wood kind.
+\*\*\*The wood kind, facsimiles of them at least.
 
 Q: Why "fv_tree"?
 
