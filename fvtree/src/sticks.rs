@@ -1,7 +1,7 @@
 use std::convert::TryFrom;
 use std::fmt;
 
-use crate::common::Point;
+use common::Point;
 
 pub enum Stick {
     VerticalBranch,

@@ -40,8 +40,8 @@ impl TreeStats {
 
 use std::fmt;
 use rand::Rng;
-use crate::common::Point;
-use crate::text_canvas;
+use common::Point;
+use text_canvas;
 
 pub struct PrintableFvtree {
     canvas: text_canvas::Canvas,
@@ -120,6 +120,8 @@ impl fmt::Display for PrintableFvtree {
 pub struct Fvtree {
     tree_string: String,
 }
+
+mod sticks;
 
 use crate::sticks::Stick;
 

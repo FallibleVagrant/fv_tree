@@ -1,11 +1,8 @@
-[package]
-name = "fv_tree"
-version = "0.1.0"
-authors = ["FallibleVagrant <124470389+FallibleVagrant@users.noreply.github.com>"]
-edition = "2018"
+[workspace]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-rand = "0.8.5"
-
+members = [
+	"fvtree",
+	"fvt",
+	"text_canvas",
+	"common",
+]

@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::common::Point;
+use common::Point;
 
 pub struct Canvas {
     canvas: Vec<Vec<char>>,

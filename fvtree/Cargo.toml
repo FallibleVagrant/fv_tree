@@ -1,0 +1,12 @@
+[package]
+name = "fvtree"
+version = "0.1.0"
+authors = ["FallibleVagrant <124470389+FallibleVagrant@users.noreply.github.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rand = "0.8.5"
+common = {path = "../common"}
+text_canvas = {path = "../text_canvas"}
