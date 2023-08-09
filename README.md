@@ -1,17 +1,14 @@
-Q: What does it do?
+Q: What is this?
 
-A: It generates beautiful\* UTF-8\*\* trees\*\*\*.
+A: A repository for fvt, the command-line utility for generating fvtrees, using the fvtree library, which is also stored here.
 
-\*Trees are not, in fact, beautiful.
+Q: Okay, what's an "fvtree"?
 
-\*\*Specification in development.
+A: They are simple, 2D trees (the wood kind), rendered in text.
 
-\*\*\*The wood kind, facsimiles of them at least.
+Q: Why "fvtree"?
 
-Q: Why "fv_tree"?
-
-A: It sounded catchy, even though it's just my name.
-   I'm giving it the retronym "fun, versatile tree".
+A: It sounded catchy. I couldn't think of a better name.
 
 Q: Why did you use vec for the text_canvas? A HashMap would've been much easier to implement.
 
