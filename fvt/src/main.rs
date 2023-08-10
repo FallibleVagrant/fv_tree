@@ -7,7 +7,7 @@ fn main() {
     let mut args = env::args();
 
     let fvtree = fvtree::Fvtree::new();
-    //println!("{}\n", fvtree);
+    println!("{}\n", fvtree);
     let fvtree = fvtree::PrintableFvtree::build(&fvtree).unwrap();
 
     if args.any(|s| s == "-p") {

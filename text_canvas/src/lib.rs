@@ -23,11 +23,11 @@ impl Canvas {
     //Useful for accessing where it will actually be placed in the vec.
     //Keep in mind this is only for one axis.
     //
-    //Also might want to run is_point_within_offset before using this. Doesn't work well when points are
+    //Also might want to run is_point_within_offset before this. Doesn't work well when points are
     //still negative after offset.
     fn calc_vec_index(point: i32, offset: usize) -> usize {
         let i: usize;
-        if point.is_positive() {
+        if point >= 0 {
             i = (point as usize) + offset;
         }
         else {
@@ -135,10 +135,8 @@ impl Canvas {
     //Check if point >= 0 when offset is added,
     //i.e., point values aren't negative for calc_vec_index.
     fn is_point_within_offset(&self, point: Point) -> bool {
-        return ((point.x.is_negative() && point.x.abs() as usize > self.x_offset)
-                && (point.y.is_negative() && point.y.abs() as usize > self.y_offset))
-
-                || (point.x >= 0 && point.y >= 0);
+        return (point.x >= 0 || point.x.abs() as usize <= self.x_offset)
+                && (point.y >= 0 || point.y.abs() as usize <= self.y_offset)
     }
 
     ///Check if a point in the canvas is blank.
@@ -206,7 +204,7 @@ impl fmt::Display for Canvas {
     }
 }
 
-struct LayeredCanvas {
+/*struct LayeredCanvas {
     layers: Vec<Canvas>,
 }
 
@@ -215,7 +213,7 @@ impl LayeredCanvas {
         //TODO: placeholder.
         Canvas::new()
     }
-}
+}*/
 
 #[cfg(test)]
 mod text_canvas_tests {
@@ -338,7 +336,15 @@ mod text_canvas_tests {
     fn char_is_present_check() {
         let mut canvas = Canvas::new();
         canvas.put(Point {x: 2, y: 3}, 'x');
-        let output = canvas.is_char_point(Point {x: 2, y: 3}, 'x');
-        assert!(output);
+        let is_there = canvas.is_char_point(Point {x: 2, y: 3}, 'x');
+        assert!(is_there);
+    }
+
+    #[test]
+    fn char_is_present_check_negative() {
+        let mut canvas = Canvas::new();
+        canvas.put(Point {x: -2, y: 3}, 'x');
+        let is_there = canvas.is_char_point(Point {x: -2, y: 3}, 'x');
+        assert!(is_there);
     }
 }

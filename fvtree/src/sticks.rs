@@ -3,6 +3,7 @@ use std::fmt;
 
 use common::Point;
 
+#[derive(Copy, Clone, Debug)]
 pub enum Stick {
     VerticalBranch,
     LeftBranch,
@@ -62,7 +63,7 @@ trait StickPrint: fmt::Display {
     fn cursor_move() -> Point;
 }
 
-trait StickCanonical {
+pub trait StickCanonical {
     fn is_same_char(c: char) -> bool;
     fn to_char() -> char;
     fn is_control_char() -> bool;

@@ -1,43 +1,3 @@
-pub struct TreeConfig {
-    min_leaves: usize,
-    min_trunk_height: usize,
-    min_sticks: usize,
-    min_sticks_in_branch: usize,
-    max_sticks_in_branch: usize,
-}
-
-impl TreeConfig {
-    pub fn new() -> TreeConfig {
-        TreeConfig {
-            min_leaves: 0,
-            min_trunk_height: 0,
-            min_sticks: 20,
-            min_sticks_in_branch: 2,
-            max_sticks_in_branch: 4,
-        }
-    }
-}
-
-struct TreeStats {
-    num_leaves_in_current_branch: usize,
-    height: usize,
-    trunk_height: usize,
-    num_sticks_in_current_branch: usize,
-    branch_depth: usize,
-}
-
-impl TreeStats {
-    pub fn new() -> TreeStats {
-        TreeStats {
-            num_leaves_in_current_branch: 0,
-            height: 0,
-            trunk_height: 0,
-            num_sticks_in_current_branch: 0,
-            branch_depth: 0,
-        }
-    }
-}
-
 use std::fmt;
 use rand::Rng;
 use common::Point;
@@ -122,92 +82,171 @@ pub struct Fvtree {
 }
 
 mod sticks;
+mod confstats;
 
 use crate::sticks::Stick;
+use crate::confstats::{Stats, Config, TreeStats, BranchStats};
+
+//For returning BranchReturn char 'r' or BranchIndicator char 'y'.
+use crate::sticks::{BranchIndicator, BranchReturn};
+use crate::sticks::StickCanonical;
 
 impl Fvtree {
-    //Returns a "stick", or None.
-    fn gen_stick_or_stop(rng: &mut rand::rngs::ThreadRng, stats: &mut TreeStats, config: &TreeConfig) -> Option<Stick> {
-        if stats.num_sticks_in_current_branch >= config.max_sticks_in_branch {
-            let num = rng.gen_range(1..=100);
-            
-            if num < 40 {
-                if stats.branch_depth > 0 {
-                    stats.num_sticks_in_current_branch = 0;
-                    stats.branch_depth -= 1;
-                    return Some(Stick::BranchReturn);
-                }
-                else {
-                    return None;
-                }
-            }
-            if true {
-                stats.num_sticks_in_current_branch = 0;
-                stats.branch_depth += 1;
-                return Some(Stick::BranchIndicator);
-            }
-        }
-
-        match rng.gen_range(1..=5) {
-            1 => {
-                stats.num_sticks_in_current_branch += 1;
-                Some(Stick::VerticalBranch)
-            },
-            2 => {
-                stats.num_sticks_in_current_branch += 1;
-                Some(Stick::LeftBranch)
-            },
-            3 => {
-                stats.num_sticks_in_current_branch += 1;
-                Some(Stick::RightBranch)
-            },
-            4 => {
-                if stats.num_sticks_in_current_branch <= config.min_sticks_in_branch {
-                    return Fvtree::gen_stick_or_stop(rng, stats, config);
-                }
-                if stats.branch_depth > 0 {
-                    match rng.gen_range(1..=3) {
-                        1 => {
-                            stats.branch_depth += 1;
-                            Some(Stick::BranchIndicator)
-                        },
-                        2 | 3 => {
-                            stats.branch_depth -= 1;
-                            Some(Stick::BranchReturn)
-                        },
-                        _ => {
-println!("Didn't branch instead ended.");
-                            return None;
-                        },
-                    }
-                }
-                else {
-                    stats.branch_depth += 1;
-                    Some(Stick::BranchIndicator)
-                }
-            },
-            _ => {
-                return None;
-            },
-        }
+    pub fn new() -> Fvtree {
+        Fvtree::new_recursive()
     }
 
-    pub fn new() -> Fvtree {
-        let mut rng = rand::thread_rng();
-        let mut tree_string = String::new();
-        let config = TreeConfig::new();
-        let mut stats = TreeStats::new();
+    //Returns a "stick" for the trunk, or None.
+    fn gen_trunk_stick_or_stop(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Config) -> Option<Stick> {
+        let mut possible_outputs: Vec<Option<Stick>> = Vec::new();
 
-        loop {
-            let stick = Fvtree::gen_stick_or_stop(&mut rng, &mut stats, &config);
+        possible_outputs.push(Some(Stick::VerticalBranch));
+        possible_outputs.push(Some(Stick::LeftBranch));
+        possible_outputs.push(Some(Stick::RightBranch));
 
-            match stick {
-                Some(stick) => tree_string.push(stick.to_char()),
-                None => if tree_string.len() > config.min_sticks {
-                    break;
-                },
+        if stats.b.height >= conf.t.min_height_before_trunk_branches {
+            //The trunk may also branch.
+            possible_outputs.push(Some(Stick::BranchIndicator));
+        }
+
+        if stats.b.height >= conf.t.min_trunk_height && stats.t.num_sticks >= conf.t.min_sticks {
+            //We've reached the min_trunk_height and may stop now.
+            possible_outputs.push(None);
+        }
+
+        let num = rng.gen_range(0..possible_outputs.len());
+
+        if let Some(stick) = possible_outputs[num] {
+            //Not BranchIndicator.
+            if !stick.is_control_char() {
+                //TODO: integrate height into add_one_stick().
+                stats.b.height += 1;
+                stats.add_one_stick();
+            }
+            //Is BranchIndicator.
+            else {
+                stats.add_one_branch();
             }
         }
+
+//println!("Putting down {:?}", possible_outputs[num]);
+        return possible_outputs[num];
+    }
+
+    fn gen_branch_stick_or_stop(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Config) -> Option<Stick> {
+        let mut possible_outputs: Vec<Option<Stick>> = Vec::new();
+
+        possible_outputs.push(Some(Stick::VerticalBranch));
+        possible_outputs.push(Some(Stick::LeftBranch));
+        possible_outputs.push(Some(Stick::RightBranch));
+
+        if stats.b.num_sticks >= conf.b.min_sticks_before_branch {
+            possible_outputs.push(Some(Stick::BranchIndicator));
+        }
+
+        if stats.b.num_sticks >= conf.b.min_sticks {
+            //We've attained min_sticks and may stop now.
+            possible_outputs.push(Some(Stick::BranchReturn));
+        }
+
+        let num = rng.gen_range(0..possible_outputs.len());
+
+        if let Some(stick) = possible_outputs[num] {
+            if !stick.is_control_char() {
+                stats.add_one_stick();
+            }
+            else {
+                match stick {
+                    Stick::BranchIndicator => {
+                        stats.add_one_branch();
+                    },
+                    Stick::BranchReturn => {
+                        stats.sub_one_branch();
+                    },
+                    _ => panic!("Undefined control character!"),
+                }
+            }
+        }
+
+//println!("Putting down {:?}", possible_outputs[num]);
+        return possible_outputs[num];
+    }
+
+    fn gen_branches(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Config) -> String {
+        let mut branch: String = String::new();
+
+        while stats.b.num_sticks < conf.b.max_sticks {
+            let stick;
+
+            match Fvtree::gen_branch_stick_or_stop(rng, stats, conf) {
+                Some(Stick::BranchIndicator) => {
+                    Fvtree::branch(&mut branch, rng, stats, conf);
+                    continue;
+                },
+                Some(Stick::BranchReturn) => {
+                    branch.push(BranchReturn::to_char());
+                    return branch;
+                },
+                Some(s) => stick = s,
+                //TODO: figure out what None does with branches later.
+                None => panic!(),
+            }
+
+            branch.push(stick.to_char());
+        }
+
+        branch.push(BranchReturn::to_char());
+        stats.sub_one_branch();
+        return branch;
+    }
+
+    fn branch(current_branch: &mut String, rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Config) {
+        current_branch.push(BranchIndicator::to_char());
+        let current_branch_stats = stats.b;
+        stats.b = BranchStats::new();
+
+        let branch = Fvtree::gen_branches(rng, stats, conf);
+
+        stats.b = current_branch_stats;
+
+        current_branch.push_str(&branch);
+    }
+
+    fn gen_trunk(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Config) -> String {
+        let mut trunk: String = String::new();
+
+        //The trunk is technically a branch, though it will still generate if
+        //conf.t.min_trunk_height > conf.b.max_sticks.
+        while stats.b.height < conf.t.max_trunk_height {
+            let stick;
+
+            match Fvtree::gen_trunk_stick_or_stop(rng, stats, conf) {
+                Some(Stick::BranchIndicator) => {
+                    Fvtree::branch(&mut trunk, rng, stats, conf);
+                    continue;
+                },
+                Some(s) => stick = s,
+                None => return trunk,
+            }
+
+            trunk.push(stick.to_char());
+        }
+
+        return trunk;
+    }
+
+    pub fn new_recursive() -> Fvtree {
+        let mut rng = rand::thread_rng();
+        let mut tree_string = String::new();
+        let conf = Config::new();
+        let mut stats = Stats::new();
+
+        if conf.t.max_sticks == 0 {
+            return Fvtree{tree_string: tree_string.to_string()};
+        }
+
+        let trunk = Fvtree::gen_trunk(&mut rng, &mut stats, &conf);
+        tree_string.push_str(&trunk);
 
         Fvtree{tree_string: tree_string.to_string()}
     }
@@ -216,9 +255,8 @@ println!("Didn't branch instead ended.");
         Fvtree{tree_string: tree_string.to_string()}
     }
 
-    pub fn build_with_config(tree_string: &str, config: &TreeConfig) -> Fvtree {
-        Fvtree{tree_string: tree_string.to_string()}
-    }
+    //pub fn build_procedural(config: &TreeConfig) -> Fvtree {
+    //}
 
     pub fn tree_string(&self) -> String {
         self.tree_string.to_string()
@@ -228,5 +266,15 @@ println!("Didn't branch instead ended.");
 impl fmt::Display for Fvtree {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.tree_string)
+    }
+}
+
+#[cfg(test)]
+mod fvtree_tests {
+    use super::*;
+
+    #[test]
+    fn dont_panic() {
+        assert!(true);
     }
 }
