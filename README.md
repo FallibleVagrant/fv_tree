@@ -1,3 +1,15 @@
+ |
+ |\\ \\
+//  |\\\\
+ Y \\ /
+  Y /
+   Y
+  /
+   \\
+    \\
+    O
+   /|\\
+
 Q: What is this?
 
 A: A repository for fvt, the command-line utility for generating fvtrees, using the fvtree library, which is also stored here.

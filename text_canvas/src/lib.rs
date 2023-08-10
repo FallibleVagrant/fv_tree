@@ -55,7 +55,7 @@ impl Canvas {
             //Modify the offset.
             self.x_offset += additional_offset;
 
-            for (i, mut row) in self.canvas.iter_mut().enumerate() {
+            for (i, row) in self.canvas.iter_mut().enumerate() {
                 if !row.is_empty() || i == y_index {
                     row.reserve(additional_offset);
                     //self.canvas[additional_offset..].clone_from_slice(&self.canvas[..additional_offset]);
@@ -64,7 +64,7 @@ impl Canvas {
                         //self.canvas[_j] = Vec::new();
 
                         //TODO: revise for efficiency.
-                            row.insert(0, ' ');
+                        row.insert(0, ' ');
                     }
                 }
             }
