@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>fvtree</title>
+  </head>
+  <body style="font-family: ui-monospace">
+  It may not be much, but a tree is a tree.
+  <pre>
+  <h1 id="yes"></h1>
+    <script type="module">
+      import init, { print_tree } from "./assets/js/fvtree.js";
+      init().then(() => {
+        let test = print_tree();
+        test = test.replace(/(?:\r\n|\r|\n)/g, '<br>');
+        test = test.replace(/\s/g, '&nbsp;');
+        document.getElementById("yes").innerHTML = test;
+      });
+    </script>
+  </pre>
+  </body>
+</html>
+
