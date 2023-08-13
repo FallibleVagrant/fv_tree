@@ -11,10 +11,10 @@ use crate::sticks::StickCanonical;
 fn gen_trunk_stick_or_stop(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Config) -> Option<Stick> {
     let mut possible_outputs: Vec<Option<Stick>> = Vec::new();
 
-    if stats.b.height < conf.t.height_when_trunk_forced_to_branch {
-        possible_outputs.push(Some(Stick::VerticalBranch));
-        possible_outputs.push(Some(Stick::LeftBranch));
-        possible_outputs.push(Some(Stick::RightBranch));
+    if stats.b.height < conf.t.height_when_trunk_forced_to_branch || stats.t.has_branched {
+        possible_outputs.push(Some(Stick::UpBranch));
+        possible_outputs.push(Some(Stick::UpLeftBranch));
+        possible_outputs.push(Some(Stick::UpRightBranch));
     }
 
     //conf.t.height_when_trunk_forced_to_branch is always >=
@@ -52,9 +52,9 @@ fn gen_trunk_stick_or_stop(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, c
 fn gen_branch_stick_or_stop(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Config) -> Option<Stick> {
     let mut possible_outputs: Vec<Option<Stick>> = Vec::new();
 
-    possible_outputs.push(Some(Stick::VerticalBranch));
-    possible_outputs.push(Some(Stick::LeftBranch));
-    possible_outputs.push(Some(Stick::RightBranch));
+    possible_outputs.push(Some(Stick::UpBranch));
+    possible_outputs.push(Some(Stick::UpLeftBranch));
+    possible_outputs.push(Some(Stick::UpRightBranch));
 
     if stats.b.num_sticks >= conf.b.min_sticks_before_branch {
         possible_outputs.push(Some(Stick::BranchIndicator));

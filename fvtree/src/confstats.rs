@@ -80,6 +80,7 @@ pub struct TreeStats {
     pub height: usize,
     pub num_sticks: usize,
     pub branch_depth: usize,
+    pub has_branched: bool,
 }
 
 impl TreeStats {
@@ -88,6 +89,7 @@ impl TreeStats {
             height: 0,
             num_sticks: 0,
             branch_depth: 0,
+            has_branched: false,
         }
     }
 }
@@ -128,6 +130,7 @@ impl Stats {
     }
 
     pub fn add_one_branch(&mut self) {
+        self.t.has_branched = true;
         self.t.branch_depth += 1;
     }
 
