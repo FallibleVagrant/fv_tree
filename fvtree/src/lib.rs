@@ -87,6 +87,7 @@ use crate::sticks::Stick;
 use crate::confstats::{Stats, Config};
 
 mod tree_gen_recursive;
+mod choose_amongst;
 
 impl Fvtree {
     pub fn new() -> Fvtree {

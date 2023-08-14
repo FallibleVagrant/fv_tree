@@ -7,6 +7,8 @@ use crate::confstats::{Stats, Config, TreeStats, BranchStats};
 use crate::sticks::{BranchIndicator, BranchReturn};
 use crate::sticks::StickCanonical;
 
+use crate::choose_amongst::Lottery;
+
 //Returns a "stick" for the trunk, or None.
 fn gen_trunk_stick_or_stop(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Config) -> Option<Stick> {
     let mut possible_outputs: Vec<Option<Stick>> = Vec::new();
