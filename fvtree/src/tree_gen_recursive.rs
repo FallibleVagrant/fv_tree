@@ -11,12 +11,12 @@ use crate::choose_amongst::Lottery;
 
 //Returns a "stick" for the trunk, or None.
 fn gen_trunk_stick_or_stop(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Config) -> Option<Stick> {
-    let mut possible_outputs: Vec<Option<Stick>> = Vec::new();
+    let mut lottery: Lottery<Option<Stick>> = Lottery::build(rng);
 
     if stats.b.height < conf.t.height_when_trunk_forced_to_branch || stats.t.has_branched {
-        possible_outputs.push(Some(Stick::UpBranch));
-        possible_outputs.push(Some(Stick::UpLeftBranch));
-        possible_outputs.push(Some(Stick::UpRightBranch));
+        lottery.add(Some(Stick::UpBranch));
+        lottery.add(Some(Stick::UpLeftBranch));
+        lottery.add(Some(Stick::UpRightBranch));
     }
 
     //conf.t.height_when_trunk_forced_to_branch is always >=
@@ -24,17 +24,17 @@ fn gen_trunk_stick_or_stop(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, c
     //so BranchIndicator is always a possible output when the other sticks aren't.
     if stats.b.height >= conf.t.min_height_before_trunk_can_branch {
         //The trunk may also branch.
-        possible_outputs.push(Some(Stick::BranchIndicator));
+        lottery.add(Some(Stick::BranchIndicator));
     }
 
     if stats.b.height >= conf.t.min_trunk_height && stats.t.num_sticks >= conf.t.min_sticks {
         //We've reached the min_trunk_height and may stop now.
-        possible_outputs.push(None);
+        lottery.add(None);
     }
 
-    let num = rng.gen_range(0..possible_outputs.len());
+    let output = lottery.choose();
 
-    if let Some(stick) = possible_outputs[num] {
+    if let Some(stick) = output {
         //Not BranchIndicator.
         if !stick.is_control_char() {
             //TODO: integrate height into add_one_stick().
@@ -48,28 +48,28 @@ fn gen_trunk_stick_or_stop(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, c
     }
 
 //println!("Putting down {:?}", possible_outputs[num]);
-    return possible_outputs[num];
+    return output;
 }
 
 fn gen_branch_stick_or_stop(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Config) -> Option<Stick> {
-    let mut possible_outputs: Vec<Option<Stick>> = Vec::new();
+    let mut lottery: Lottery<Option<Stick>> = Lottery::build(rng);
 
-    possible_outputs.push(Some(Stick::UpBranch));
-    possible_outputs.push(Some(Stick::UpLeftBranch));
-    possible_outputs.push(Some(Stick::UpRightBranch));
+    lottery.add(Some(Stick::UpBranch));
+    lottery.add(Some(Stick::UpLeftBranch));
+    lottery.add(Some(Stick::UpRightBranch));
 
     if stats.b.num_sticks >= conf.b.min_sticks_before_branch {
-        possible_outputs.push(Some(Stick::BranchIndicator));
+        lottery.add(Some(Stick::BranchIndicator));
     }
 
     if stats.b.num_sticks >= conf.b.min_sticks {
         //We've attained min_sticks and may stop now.
-        possible_outputs.push(Some(Stick::BranchReturn));
+        lottery.add(Some(Stick::BranchReturn));
     }
 
-    let num = rng.gen_range(0..possible_outputs.len());
+    let output = lottery.choose();
 
-    if let Some(stick) = possible_outputs[num] {
+    if let Some(stick) = output {
         if !stick.is_control_char() {
             stats.add_one_stick();
         }
@@ -87,7 +87,7 @@ fn gen_branch_stick_or_stop(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, 
     }
 
 //println!("Putting down {:?}", possible_outputs[num]);
-    return possible_outputs[num];
+    return output;
 }
 
 fn gen_branches(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Config) -> String {
