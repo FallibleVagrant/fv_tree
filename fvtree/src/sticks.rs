@@ -23,6 +23,7 @@ pub enum Stick {
     BranchReturn,
 
     LeafSpawn,
+    LeafReturn,
 }
 
 impl Stick {
@@ -46,6 +47,7 @@ impl Stick {
             Stick::BranchReturn => BranchReturn::is_control_char(),
 
             Stick::LeafSpawn => LeafSpawn::is_control_char(),
+            Stick::LeafReturn => LeafReturn::is_control_char(),
         }
     }
 
@@ -69,6 +71,7 @@ impl Stick {
             Stick::BranchReturn => BranchReturn::to_char(),
 
             Stick::LeafSpawn => LeafSpawn::to_char(),
+            Stick::LeafReturn => LeafReturn::to_char(),
         }
     }
 
@@ -89,6 +92,30 @@ impl Stick {
             Stick::DownRightLeaf => Ok(DownRightLeaf::cursor_move()),
 
             _ => Err("Expected a canonical Stick that is not a control character."),
+        }
+    }
+
+    pub fn is_leaf(&self) -> bool {
+        match self {
+            Stick::UpBranch => UpBranch::is_leaf(),
+            Stick::UpLeftBranch => UpLeftBranch::is_leaf(),
+            Stick::UpRightBranch => UpRightBranch::is_leaf(),
+
+            Stick::UpLeaf => UpLeaf::is_leaf(),
+            Stick::LeftLeaf => LeftLeaf::is_leaf(),
+            Stick::RightLeaf => RightLeaf::is_leaf(),
+            Stick::DownLeaf => DownLeaf::is_leaf(),
+
+            Stick::UpLeftLeaf => UpLeftLeaf::is_leaf(),
+            Stick::UpRightLeaf => UpRightLeaf::is_leaf(),
+            Stick::DownLeftLeaf => DownLeftLeaf::is_leaf(),
+            Stick::DownRightLeaf => DownRightLeaf::is_leaf(),
+
+            Stick::BranchIndicator => BranchIndicator::is_leaf(),
+            Stick::BranchReturn => BranchReturn::is_leaf(),
+
+            Stick::LeafSpawn => LeafSpawn::is_leaf(),
+            Stick::LeafReturn => LeafReturn::is_leaf(),
         }
     }
 }
@@ -112,6 +139,7 @@ const BRANCH_INDICATOR_C: char = 'y';
 const BRANCH_RETURN_C: char = 'r';
 
 const LEAF_SPAWN_C: char = 'o';
+const LEAF_RETURN_C: char = 'l';
 
 impl TryFrom<char> for Stick {
     type Error = &'static str;
@@ -136,6 +164,7 @@ impl TryFrom<char> for Stick {
             BRANCH_RETURN_C => Ok(Stick::BranchReturn),
 
             LEAF_SPAWN_C => Ok(Stick::LeafSpawn),
+            LEAF_RETURN_C => Ok(Stick::LeafReturn),
 
             _ => Err("Expected one of the canonical Sticks."),
         }
@@ -150,10 +179,11 @@ pub trait StickCanonical {
     fn is_same_char(c: char) -> bool;
     fn to_char() -> char;
     fn is_control_char() -> bool;
+    fn is_leaf() -> bool;
 }
 
 macro_rules! sticknonctrl {
-    ($name: ty, $c: expr, $pointx: expr, $pointy: expr) => {
+    ($name: ty, $c: expr, $pointx: expr, $pointy: expr, $is_leaf: expr) => {
         impl StickPrint for $name {
             fn cursor_move() -> Point {
                 Point {x: $pointx, y: $pointy}
@@ -172,6 +202,10 @@ macro_rules! sticknonctrl {
             fn is_control_char() -> bool {
                 false
             }
+
+            fn is_leaf() -> bool {
+                $is_leaf
+            }
         }
 
         impl fmt::Display for $name {
@@ -182,13 +216,17 @@ macro_rules! sticknonctrl {
     }
 }
 
+//Branches.
+
 pub struct UpBranch;
 pub struct UpLeftBranch;
 pub struct UpRightBranch;
 
-sticknonctrl!(UpBranch, UP_BRANCH_C, 0, 1);
-sticknonctrl!(UpLeftBranch, UPLEFT_BRANCH_C, -1, 1);
-sticknonctrl!(UpRightBranch, UPRIGHT_BRANCH_C, 1, 1);
+sticknonctrl!(UpBranch, UP_BRANCH_C, 0, 1, false);
+sticknonctrl!(UpLeftBranch, UPLEFT_BRANCH_C, -1, 1, false);
+sticknonctrl!(UpRightBranch, UPRIGHT_BRANCH_C, 1, 1, false);
+
+//Leaves.
 
 pub struct UpLeaf;
 pub struct LeftLeaf;
@@ -200,15 +238,15 @@ pub struct UpRightLeaf;
 pub struct DownLeftLeaf;
 pub struct DownRightLeaf;
 
-sticknonctrl!(UpLeaf, UP_LEAF_C, 0, 1);
-sticknonctrl!(LeftLeaf, LEFT_LEAF_C, -1, 0);
-sticknonctrl!(RightLeaf, RIGHT_LEAF_C, 1, 0);
-sticknonctrl!(DownLeaf, DOWN_LEAF_C, 0, -1);
+sticknonctrl!(UpLeaf, UP_LEAF_C, 0, 1, true);
+sticknonctrl!(LeftLeaf, LEFT_LEAF_C, -1, 0, true);
+sticknonctrl!(RightLeaf, RIGHT_LEAF_C, 1, 0, true);
+sticknonctrl!(DownLeaf, DOWN_LEAF_C, 0, -1, true);
 
-sticknonctrl!(UpLeftLeaf, UPLEFT_LEAF_C, -1, 1);
-sticknonctrl!(UpRightLeaf, UPRIGHT_LEAF_C, 1, 1);
-sticknonctrl!(DownLeftLeaf, DOWNLEFT_LEAF_C, -1, -1);
-sticknonctrl!(DownRightLeaf, DOWNRIGHT_LEAF_C, 1, -1);
+sticknonctrl!(UpLeftLeaf, UPLEFT_LEAF_C, -1, 1, true);
+sticknonctrl!(UpRightLeaf, UPRIGHT_LEAF_C, 1, 1, true);
+sticknonctrl!(DownLeftLeaf, DOWNLEFT_LEAF_C, -1, -1, true);
+sticknonctrl!(DownRightLeaf, DOWNRIGHT_LEAF_C, 1, -1, true);
 
 macro_rules! stickctrl {
     ($name: ty, $c: expr) => {
@@ -223,6 +261,10 @@ macro_rules! stickctrl {
 
             fn is_control_char() -> bool {
                 true
+            }
+
+            fn is_leaf() -> bool {
+                false
             }
         }
 
@@ -243,5 +285,7 @@ stickctrl!(BranchIndicator, BRANCH_INDICATOR_C);
 stickctrl!(BranchReturn, BRANCH_RETURN_C);
 
 pub struct LeafSpawn;
+pub struct LeafReturn;
 
 stickctrl!(LeafSpawn, LEAF_SPAWN_C);
+stickctrl!(LeafReturn, LEAF_RETURN_C);

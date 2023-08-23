@@ -50,6 +50,11 @@ pub struct BranchConfig {
     pub min_sticks: usize,
     pub max_sticks: usize,
     pub min_sticks_before_branch: usize,
+    pub allow_dead_branches: bool,
+    pub min_leaves_in_leaflet: usize,
+    pub max_leaves_in_leaflet: usize,
+    pub min_leaflets: usize,
+    pub max_leaflets: usize,
 }
 
 impl BranchConfig {
@@ -58,6 +63,11 @@ impl BranchConfig {
             min_sticks: 2,
             max_sticks: 4,
             min_sticks_before_branch: 2,
+            allow_dead_branches: false,
+            min_leaves_in_leaflet: 2,
+            max_leaves_in_leaflet: 3,
+            min_leaflets: 4,
+            max_leaflets: 5,
         }
     }
 }
@@ -99,6 +109,9 @@ pub struct BranchStats {
     pub num_leaves: usize,
     pub num_sticks: usize,
     pub height: usize,
+    pub is_leaf_state: bool,
+    pub num_leaves_in_leaflet: usize,
+    pub num_leaflets: usize,
 }
 
 impl BranchStats {
@@ -107,6 +120,9 @@ impl BranchStats {
             num_leaves: 0,
             num_sticks: 0,
             height: 0,
+            is_leaf_state: false,
+            num_leaves_in_leaflet: 0,
+            num_leaflets: 0,
         }
     }
 }
@@ -136,5 +152,11 @@ impl Stats {
 
     pub fn sub_one_branch(&mut self) {
         self.t.branch_depth -= 1;
+    }
+
+    pub fn add_one_leaf(&mut self) {
+        self.add_one_stick();
+        self.b.num_leaves += 1;
+        self.b.num_leaves_in_leaflet += 1;
     }
 }

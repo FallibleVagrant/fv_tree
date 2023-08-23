@@ -14,12 +14,12 @@ impl PrintableFvtree {
     //    O
     //   /|\
     //
-    //Puts it below the x-axis so building proper starts at (0, 0).
+    //Puts it at (0, 0) so proper building starts at (0, 1).
     fn put_down_root(canvas: &mut text_canvas::Canvas) {
-        canvas.put(Point {x: 0, y: -1}, 'O');
-        canvas.put(Point {x: -1, y: -2}, '/');
-        canvas.put(Point {x: 0, y: -2}, '|');
-        canvas.put(Point {x: 1, y: -2}, '\\');
+        canvas.put(Point {x: 0, y: 0}, 'O');
+        canvas.put(Point {x: -1, y: -1}, '/');
+        canvas.put(Point {x: 0, y: -1}, '|');
+        canvas.put(Point {x: 1, y: -1}, '\\');
     }
 
     pub fn build(tree: &Fvtree) -> Result<PrintableFvtree, &'static str> {
@@ -39,6 +39,7 @@ impl PrintableFvtree {
         PrintableFvtree::put_down_root(&mut canvas);
 
         let mut branch_points: Vec<Point> = Vec::new();
+        let mut leaf_spawn_point: Option<Point> = None;
 
         for stick in sticks {
 //println!("{}", canvas);
@@ -46,23 +47,52 @@ impl PrintableFvtree {
                 match stick {
                     Stick::BranchIndicator => {
 //println!("Putting branch down at {:?}.", cursor);
-canvas.put(cursor, 'Y');
+                        canvas.put(cursor, 'Y');
                         branch_points.push(cursor);
                     },
                     Stick::BranchReturn => {
+                        //TODO: rewrite to return err.
                         cursor = branch_points.pop().expect("Found a BranchReset but not a corresponding BranchIndicator.");
                     },
+
+                    Stick::LeafSpawn => {
+                        leaf_spawn_point = Some(cursor);
+                        canvas.put(cursor, 'O');
+                    },
+                    Stick::LeafReturn => {
+                        if leaf_spawn_point.is_none() {
+                            return Err("Found a LeafReturn but not a corresponding LeafSpawn.");
+                        }
+                        cursor = leaf_spawn_point.unwrap();
+                    },
+
                     _ => return Err("Encountered undefined control character?"),
                 }
             }
             else {
                 let cursor_move = stick.cursor_move()?;
 
-                if !canvas.is_char_point(cursor, 'Y') {
-//println!("Overwriting at {:?} with {}", cursor, stick.to_char());
-                    canvas.put(cursor, stick.to_char());
+                //Don't overwrite branch points displayed on the canvas, unless it is a leaf.
+                if canvas.is_char_point(cursor + cursor_move, 'Y') && !stick.is_leaf() {
+                    cursor += cursor_move;
+                    continue;
                 }
+
+                //No longer in leaf-placing state.
+                if !stick.is_leaf() {
+                    leaf_spawn_point = None;
+                }
+                else {
+                    //Always put a quote where a leaf would be -- may change later to alias leaves
+                    //into looking like other characters.
+                    cursor += cursor_move;
+                    canvas.put(cursor, '\"');
+                    continue;
+                }
+
+//println!("Overwriting at {:?} with {}", cursor, stick.to_char());
                 cursor += cursor_move;
+                canvas.put(cursor, stick.to_char());
             }
         }
 
