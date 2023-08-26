@@ -1,0 +1,11 @@
+html {
+	font-family: ui-monospace;
+	background-color: #0a0a0a;
+	color: #eee;
+}
+
+.center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
