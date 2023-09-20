@@ -7,6 +7,7 @@ pub struct TreeConfig {
     pub height_when_trunk_forced_to_branch: usize,
     pub min_sticks: usize,
     pub max_sticks: usize,
+    pub dead_tree: bool,
 }
 
 impl TreeConfig {
@@ -18,10 +19,12 @@ impl TreeConfig {
             height_when_trunk_forced_to_branch: 3,
             min_sticks: 20,
             max_sticks: 1000,
+            dead_tree: false,
         }
     }
 
     //TODO: Finish panic messages.
+    /*
     pub fn build(min_trunk_height: usize, max_trunk_height: usize, min_height_before_trunk_can_branch: usize, height_when_trunk_forced_to_branch: usize, min_sticks: usize, max_sticks: usize) -> TreeConfig {
         if min_trunk_height > max_trunk_height {
             panic!("");
@@ -44,6 +47,7 @@ impl TreeConfig {
             max_sticks,
         }
     }
+    */
 }
 
 pub struct BranchConfig {

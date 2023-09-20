@@ -14,7 +14,7 @@ impl PrintableFvtree {
     //    O
     //   /|\
     //
-    //Puts it at (0, 0) so proper building starts at (0, 1).
+    //Puts it at (0, 0) so proper building starts on top of it.
     fn put_down_root(canvas: &mut text_canvas::Canvas) {
         canvas.put(Point {x: 0, y: 0}, 'O');
         canvas.put(Point {x: -1, y: -1}, '/');
@@ -72,8 +72,10 @@ impl PrintableFvtree {
             else {
                 let cursor_move = stick.cursor_move()?;
 
-                //Don't overwrite branch points displayed on the canvas, unless it is a leaf.
-                if canvas.is_char_point(cursor + cursor_move, 'Y') && !stick.is_leaf() {
+                //Don't overwrite branch points or seed spawns displayed on the canvas,
+                //unless you are placing a leaf.
+                if (canvas.is_char_point(cursor + cursor_move, 'Y') || canvas.is_char_point(cursor + cursor_move, 'O'))
+                    && !stick.is_leaf() {
                     cursor += cursor_move;
                     continue;
                 }

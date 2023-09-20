@@ -2,6 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Fvtree</title>
 		<link rel="stylesheet" href="assets/css/common.css" />
 		<link rel="stylesheet" href="assets/css/nav.css" />
@@ -18,13 +19,13 @@
 			<a href="about.html">About</a>
 		</nav>
 
-		<div class="center">
+		<div class="container">
 			This page generates a random tree upon reload.<br>
 			Keep in mind that it uses an outdated leafless version,
 			until I get workflows set up.<br>
 		</div>
-		<div class="center">
-			<pre>
+		<div class="container">
+			<div class="random-tree">
 				<h1 id="tree" class="center"></h1>
 				<script type="module">
 					import init, { print_tree } from "./assets/js/fvtree.js";
@@ -35,7 +36,7 @@
 						document.getElementById("tree").innerHTML = test;
 					});
 				</script>
-			</pre>
+			</div>
 		</div>
 	</body>
 </html>

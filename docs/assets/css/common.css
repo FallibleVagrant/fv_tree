@@ -1,11 +1,57 @@
 html {
+	font-size: 1.2em;
 	font-family: ui-monospace;
 	background-color: #0a0a0a;
 	color: #eee;
 }
 
-.center {
-	display: flex;
+a {
+	color: seagreen;
+}
+
+main {
+	margin: 0 15%;
+}
+
+code {
+	color: #ea1a0b;
+	background-color: #2a2a2a;
+	font-size: 1.3em;
+	border-radius: 10px;
+	padding: 0.1em 0.5em;
+}
+
+.container {
+	display: grid;
 	align-items: center;
-	justify-content: center;
+	justify-items: center;
+}
+
+pre {
+	font-size: 1.3em;
+	padding: 0;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.center {
+	position: center;
+}
+
+footer {
+	margin: 20% auto auto auto;
+}
+
+.footer-tree {
+	padding: 1.3em 0 0 0;
+}
+
+hr {
+	border: solid;
+	color: inherit;
+}
+
+.random-tree {
+	font-family: monospace;
+	white-space: pre;
 }

@@ -198,7 +198,9 @@ fn gen_branches(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Confi
             Some(s) => stick = s,
             //TODO: figure out what None does with branches later.
             None => {
-                branch_str.push_str(&gen_leaves(rng, stats, conf));
+                if !conf.t.dead_tree {
+                    branch_str.push_str(&gen_leaves(rng, stats, conf));
+                }
                 branch_str.push(BranchReturn::to_char());
                 stats.sub_one_branch();
                 return branch_str;
@@ -208,7 +210,7 @@ fn gen_branches(rng: &mut rand::rngs::ThreadRng, stats: &mut Stats, conf: &Confi
         branch_str.push(stick.to_char());
     }
 
-    if !conf.b.allow_dead_branches {
+    if !conf.b.allow_dead_branches && !conf.t.dead_tree {
         branch_str.push_str(&gen_leaves(rng, stats, conf));
     }
     branch_str.push(BranchReturn::to_char());

@@ -1,7 +1,10 @@
 nav {
-	padding: 1rem 2rem;
+	display: flex;
+	padding: 0.5rem 2rem;
 	border: 1px solid #eee;
 	margin-bottom: 2rem;
+	align-items: center;
+	justify-items: left;
 }
 
 nav a {
