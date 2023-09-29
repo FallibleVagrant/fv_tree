@@ -26,97 +26,72 @@ pub enum Stick {
     LeafReturn,
 }
 
+//God this is dumb, there's definitely a better way to do this. (So why don't I take it?)
+//Hacky macro to emulate enum_dispatch, i.e. each variant calls the same func.
+//Uglier than enum_dispatch, but better than without.
+macro_rules! match_func_on_each_variant {
+    ($self: ident, $func: ident) => {
+        match $self {
+            Stick::UpBranch => UpBranch::$func(),
+            Stick::UpLeftBranch => UpLeftBranch::$func(),
+            Stick::UpRightBranch => UpRightBranch::$func(),
+
+            Stick::UpLeaf => UpLeaf::$func(),
+            Stick::LeftLeaf => LeftLeaf::$func(),
+            Stick::RightLeaf => RightLeaf::$func(),
+            Stick::DownLeaf => DownLeaf::$func(),
+
+            Stick::UpLeftLeaf => UpLeftLeaf::$func(),
+            Stick::UpRightLeaf => UpRightLeaf::$func(),
+            Stick::DownLeftLeaf => DownLeftLeaf::$func(),
+            Stick::DownRightLeaf => DownRightLeaf::$func(),
+
+            Stick::BranchIndicator => BranchIndicator::$func(),
+            Stick::BranchReturn => BranchReturn::$func(),
+
+            Stick::LeafSpawn => LeafSpawn::$func(),
+            Stick::LeafReturn => LeafReturn::$func(),
+        }
+    }
+}
+
+macro_rules! match_func_on_each_variant_except_ctrl_chars {
+    ($self: ident, $func_name: ident, $error_msg: literal) => {
+        match $self {
+            Stick::UpBranch => Ok(UpBranch::$func_name()),
+            Stick::UpLeftBranch => Ok(UpLeftBranch::$func_name()),
+            Stick::UpRightBranch => Ok(UpRightBranch::$func_name()),
+
+            Stick::UpLeaf => Ok(UpLeaf::$func_name()),
+            Stick::LeftLeaf => Ok(LeftLeaf::$func_name()),
+            Stick::RightLeaf => Ok(RightLeaf::$func_name()),
+            Stick::DownLeaf => Ok(DownLeaf::$func_name()),
+
+            Stick::UpLeftLeaf => Ok(UpLeftLeaf::$func_name()),
+            Stick::UpRightLeaf => Ok(UpRightLeaf::$func_name()),
+            Stick::DownLeftLeaf => Ok(DownLeftLeaf::$func_name()),
+            Stick::DownRightLeaf => Ok(DownRightLeaf::$func_name()),
+
+            _ => Err($error_msg),
+        }
+    }
+}
+
 impl Stick {
     pub fn is_control_char(&self) -> bool {
-        match self {
-            Stick::UpBranch => UpBranch::is_control_char(),
-            Stick::UpLeftBranch => UpLeftBranch::is_control_char(),
-            Stick::UpRightBranch => UpRightBranch::is_control_char(),
-
-            Stick::UpLeaf => UpLeaf::is_control_char(),
-            Stick::LeftLeaf => LeftLeaf::is_control_char(),
-            Stick::RightLeaf => RightLeaf::is_control_char(),
-            Stick::DownLeaf => DownLeaf::is_control_char(),
-
-            Stick::UpLeftLeaf => UpLeftLeaf::is_control_char(),
-            Stick::UpRightLeaf => UpRightLeaf::is_control_char(),
-            Stick::DownLeftLeaf => DownLeftLeaf::is_control_char(),
-            Stick::DownRightLeaf => DownRightLeaf::is_control_char(),
-
-            Stick::BranchIndicator => BranchIndicator::is_control_char(),
-            Stick::BranchReturn => BranchReturn::is_control_char(),
-
-            Stick::LeafSpawn => LeafSpawn::is_control_char(),
-            Stick::LeafReturn => LeafReturn::is_control_char(),
-        }
+        match_func_on_each_variant!(self, is_control_char)
     }
 
     pub fn to_char(&self) -> char {
-        match self {
-            Stick::UpBranch => UpBranch::to_char(),
-            Stick::UpLeftBranch => UpLeftBranch::to_char(),
-            Stick::UpRightBranch => UpRightBranch::to_char(),
-
-            Stick::UpLeaf => UpLeaf::to_char(),
-            Stick::LeftLeaf => LeftLeaf::to_char(),
-            Stick::RightLeaf => RightLeaf::to_char(),
-            Stick::DownLeaf => DownLeaf::to_char(),
-
-            Stick::UpLeftLeaf => UpLeftLeaf::to_char(),
-            Stick::UpRightLeaf => UpRightLeaf::to_char(),
-            Stick::DownLeftLeaf => DownLeftLeaf::to_char(),
-            Stick::DownRightLeaf => DownRightLeaf::to_char(),
-
-            Stick::BranchIndicator => BranchIndicator::to_char(),
-            Stick::BranchReturn => BranchReturn::to_char(),
-
-            Stick::LeafSpawn => LeafSpawn::to_char(),
-            Stick::LeafReturn => LeafReturn::to_char(),
-        }
+        match_func_on_each_variant!(self, to_char)
     }
 
     pub fn cursor_move(&self) -> Result<Point, &'static str> {
-        match self {
-            Stick::UpBranch => Ok(UpBranch::cursor_move()),
-            Stick::UpLeftBranch => Ok(UpLeftBranch::cursor_move()),
-            Stick::UpRightBranch => Ok(UpRightBranch::cursor_move()),
-
-            Stick::UpLeaf => Ok(UpLeaf::cursor_move()),
-            Stick::LeftLeaf => Ok(LeftLeaf::cursor_move()),
-            Stick::RightLeaf => Ok(RightLeaf::cursor_move()),
-            Stick::DownLeaf => Ok(DownLeaf::cursor_move()),
-
-            Stick::UpLeftLeaf => Ok(UpLeftLeaf::cursor_move()),
-            Stick::UpRightLeaf => Ok(UpRightLeaf::cursor_move()),
-            Stick::DownLeftLeaf => Ok(DownLeftLeaf::cursor_move()),
-            Stick::DownRightLeaf => Ok(DownRightLeaf::cursor_move()),
-
-            _ => Err("Expected a canonical Stick that is not a control character."),
-        }
+        match_func_on_each_variant_except_ctrl_chars!(self, cursor_move, "Expected a canonical Stick that is not a control character.")
     }
 
     pub fn is_leaf(&self) -> bool {
-        match self {
-            Stick::UpBranch => UpBranch::is_leaf(),
-            Stick::UpLeftBranch => UpLeftBranch::is_leaf(),
-            Stick::UpRightBranch => UpRightBranch::is_leaf(),
-
-            Stick::UpLeaf => UpLeaf::is_leaf(),
-            Stick::LeftLeaf => LeftLeaf::is_leaf(),
-            Stick::RightLeaf => RightLeaf::is_leaf(),
-            Stick::DownLeaf => DownLeaf::is_leaf(),
-
-            Stick::UpLeftLeaf => UpLeftLeaf::is_leaf(),
-            Stick::UpRightLeaf => UpRightLeaf::is_leaf(),
-            Stick::DownLeftLeaf => DownLeftLeaf::is_leaf(),
-            Stick::DownRightLeaf => DownRightLeaf::is_leaf(),
-
-            Stick::BranchIndicator => BranchIndicator::is_leaf(),
-            Stick::BranchReturn => BranchReturn::is_leaf(),
-
-            Stick::LeafSpawn => LeafSpawn::is_leaf(),
-            Stick::LeafReturn => LeafReturn::is_leaf(),
-        }
+        match_func_on_each_variant!(self, is_leaf)
     }
 }
 
@@ -276,8 +251,15 @@ macro_rules! stickctrl {
     }
 }
 
-//Sticks that don't render in the printed tree but exist in tree_string.
+//Sticks that change the flow of the tree, and may or may not render.
 //i.e. control characters.
+//
+//What is changing the flow of the tree?
+//State.
+//These characters change a bit of state while the tree is being constructed.
+//BranchIndicator puts the current cursor position on a stack,
+//LeafSpawn puts the tree into "leaf mode", so LeafReturn always returns to
+//the point LeafSpawn was placed at.
 pub struct BranchIndicator;
 pub struct BranchReturn;
 
