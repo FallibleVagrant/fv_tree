@@ -4,16 +4,22 @@ use fvtree;
 
 fn main() {
     //env::set_var("RUST_BACKTRACE", "1");
-    let mut args = env::args();
+    let args: Vec<String> = env::args().collect();
 
     let fvtree = fvtree::Fvtree::new();
-    println!("{}\n", fvtree);
-    let fvtree = fvtree::PrintableFvtree::build(&fvtree).unwrap();
+    let fvtree_printable = fvtree::PrintableFvtree::build(&fvtree).unwrap();
 
-    if args.any(|s| s == "-p") {
-        print!("{}", fvtree);
+    let print_tree_string: bool = args.iter().any(|s| s == "-t");
+    let print_fvtree: bool = args.iter().any(|s| s == "-p");
+
+    if print_tree_string {
+        println!("{}\n", fvtree);
     }
-    else {
-        println!("else{}", fvtree.to_string());
+    if print_fvtree {
+        print!("{}", fvtree_printable.to_string());
+    }
+
+    if !print_tree_string && !print_fvtree {
+        println!("{}\n", fvtree);
     }
 }
