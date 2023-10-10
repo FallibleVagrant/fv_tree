@@ -2,13 +2,13 @@ use std::fmt;
 use common::Point;
 use text_canvas;
 
-pub struct PrintableFvtree {
+pub struct Fvtree {
     canvas: text_canvas::Canvas,
 }
 
 use std::convert::TryFrom;
 
-impl PrintableFvtree {
+impl Fvtree {
     //Put down the root of all fvtrees, which looks like this:
     //
     //    O
@@ -22,7 +22,7 @@ impl PrintableFvtree {
         canvas.put(Point {x: 1, y: -1}, '\\');
     }
 
-    pub fn build(tree: &Fvtree) -> Result<PrintableFvtree, &'static str> {
+    pub fn build(tree: &FvtreeString) -> Result<Fvtree, &'static str> {
         let mut cursor = Point {
             x: 0,
             y: 0,
@@ -36,7 +36,7 @@ impl PrintableFvtree {
             sticks.push(stick);
         }
 
-        PrintableFvtree::put_down_root(&mut canvas);
+        Fvtree::put_down_root(&mut canvas);
 
         let mut branch_points: Vec<Point> = Vec::new();
         let mut leaf_spawn_point: Option<Point> = None;
@@ -98,17 +98,17 @@ impl PrintableFvtree {
             }
         }
 
-        return Ok(PrintableFvtree{canvas});
+        return Ok(Fvtree{canvas});
     }
 }
 
-impl fmt::Display for PrintableFvtree {
+impl fmt::Display for Fvtree {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.canvas)
     }
 }
 
-pub struct Fvtree {
+pub struct FvtreeString {
     tree_string: String,
 }
 
@@ -121,27 +121,28 @@ use crate::confstats::{Stats, Config};
 mod tree_gen_recursive;
 mod choose_amongst;
 
-impl Fvtree {
-    pub fn new() -> Fvtree {
-        Fvtree::new_recursive()
+impl FvtreeString {
+    pub fn new() -> FvtreeString {
+        FvtreeString::new_recursive()
     }
 
-    pub fn new_recursive() -> Fvtree {
+    pub fn new_recursive() -> FvtreeString {
         let mut rng = rand::thread_rng();
         let conf = Config::new();
         let mut stats = Stats::new();
 
         if conf.t.max_sticks == 0 {
-            return Fvtree{tree_string: "".to_string()};
+            return FvtreeString{tree_string: "".to_string()};
         }
 
         let tree_string = tree_gen_recursive::gen(&mut rng, &mut stats, &conf);
 
-        Fvtree{tree_string: tree_string.to_string()}
+        FvtreeString{tree_string: tree_string.to_string()}
     }
 
-    pub fn build(tree_string: &str) -> Fvtree {
-        Fvtree{tree_string: tree_string.to_string()}
+    //TODO: proper recursive descent parser, but for now this will do.
+    pub fn build(tree_string: &str) -> Result<FvtreeString, &'static String> {
+        Ok(FvtreeString{tree_string: tree_string.to_string()})
     }
 
     //pub fn build_procedural(config: &TreeConfig) -> Fvtree {
@@ -152,7 +153,7 @@ impl Fvtree {
     }
 }
 
-impl fmt::Display for Fvtree {
+impl fmt::Display for FvtreeString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.tree_string)
     }
