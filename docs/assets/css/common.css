@@ -5,9 +5,14 @@ html {
 	color: #eee;
 }
 
+/* Trick to stop nav links from transitioning from seagreen before page fully loads. */
 a {
+	color: #eee;
+}
+
+/* Only links in paragraphs are seagreen. */
+p a {
 	color: seagreen;
-	transition: filter 0.5s ease-out;
 }
 
 main {
