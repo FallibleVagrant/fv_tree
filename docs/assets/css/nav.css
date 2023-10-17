@@ -1,10 +1,11 @@
 nav {
 	display: flex;
 	padding: 0.5rem 2rem;
-	border: 1px solid #eee;
+	border-bottom: 1px solid #eee;
 	margin-bottom: 2rem;
 	align-items: center;
 	justify-items: left;
+	gap: 0.5rem;
 }
 
 nav a {
@@ -12,10 +13,12 @@ nav a {
 	text-decoration: none;
 	font-weight: bold;
 	font-size: 1.2rem;
-	border-radius: 10px;
+	border: 1px solid #0a0a0a;
 	padding: 0.5rem 0.75rem;
+	transition: background-color 0.5s ease-out, color 0.5s ease-out;
 }
 
 nav a:hover {
-	color: #fff;
+	background-color: #eee;
+	color: #333;
 }
