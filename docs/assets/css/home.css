@@ -316,7 +316,7 @@ a:active {
 
 #leaf-four {
 	transform: translate(-2.1rem, -18rem);
-	animation: 11s linear 28.5s leaf-blow;
+	animation: 11s linear 42.75s leaf-blow;
 	animation-iteration-count: infinite;
 	animation-direction: forwards;
 	animation-composition: add;
