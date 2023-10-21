@@ -22,7 +22,7 @@ body {
 	display: grid;
 	grid-template-columns: 0% 100%;
 
-	animation: 1.5s cubic-bezier(0.65, 0.05, 0.36, 1) 4s slide_right;
+	animation: 1.5s cubic-bezier(0.65, 0.05, 0.36, 1) 3s slide_right;
 	animation-fill-mode: forwards;
 }
 
@@ -50,7 +50,7 @@ pre {
 	text-align: center;
 
 	filter: opacity(0%);
-	animation: 4s ease-out 5s appear;
+	animation: 4s ease-out 4s appear;
 	animation-fill-mode: forwards;
 }
 
