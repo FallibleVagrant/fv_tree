@@ -3,6 +3,70 @@ h1 {
 	font-size: 3rem;
 	padding: 0.5rem;
 	margin: 1rem;
+	z-index: 1;
+}
+
+body {
+	/* Everything is centered... */
+	display: grid;
+	align-items: center;
+	justify-items: center;
+
+	/* ...within the entire viewport. */
+	height: 100vh;
+	margin: 0px;
+	padding: 0px;
+}
+
+#two-column {
+	display: grid;
+	grid-template-columns: 0% 100%;
+	/*display: flex;
+	flex-direction: row;*/
+	/*position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);*/
+	animation: 1.5s cubic-bezier(0.65, 0.05, 0.36, 1) 4s slide_right;
+	animation-fill-mode: forwards;
+}
+
+@keyframes slide_right {
+	0% {
+		grid-template-columns: 0% 100%;
+	}
+
+	100% {
+		grid-template-columns: 50% 50%;
+	}
+}
+
+#one-column {
+	display: flex;
+	flex-direction: column;
+	z-index: 1;
+}
+
+pre {
+	font-weight: bold;
+	font-size: 1.5em;
+	padding: 0;
+	margin: 0;
+	text-align: center;
+
+	filter: opacity(0%);
+	animation: 4s ease-out 5s appear;
+	animation-fill-mode: forwards;
+}
+
+@keyframes appear {
+	0% {
+		filter: opacity(0%);
+	}
+
+	100% {
+		filter: opacity(100%);
+	}
 }
 
 nav {
@@ -11,6 +75,7 @@ nav {
 	align-items: center;
 	justify-items: center;
 	gap: 0.5rem;
+	z-index: 1;
 }
 
 a {
@@ -21,6 +86,7 @@ a {
 	border: 1px solid #0a0a0a;
 	padding: 0.5rem 0.75rem;
 	transition: background-color 0.5s ease-out, color 0.5s ease-out, filter 0.05s ease-out;
+	z-index: 1;
 }
 
 a:hover {
@@ -28,6 +94,59 @@ a:hover {
 	color: #333;
 }
 
+.branch {
+	position: relative;
+	width: 0px;
+	height: 0px;
+	margin: 0px;
+	padding: 0px;
+
+	filter: opacity(0%);
+	transition: filter 0.3s ease-out;
+}
+
+.stick {
+	position: absolute;
+	bottom: 10rem;
+	right: 14rem;
+	width: 0px;
+	height: 0px;
+	margin: 0px;
+	padding: 0px;
+}
+
+#random-stick {
+	right: 14.2rem;
+	bottom: 3rem;
+}
+
+#editor-stick {
+	right: 14.2rem;
+	bottom: 2.9rem;
+}
+
+#about-stick {
+	bottom: 3.8rem;
+}
+
+#placeholder-stick {
+	bottom: 3.5rem;
+}
+
+a:hover + .branch {
+	filter: opacity(100%);
+}
+
 a:active {
 	filter: blur(10px) opacity(0%);
+}
+
+.disabled {
+	text-decoration: line-through;
+	color: #d00;
+}
+
+.disabled:hover {
+	background-color: #500;
+	color: #e00;
 }
