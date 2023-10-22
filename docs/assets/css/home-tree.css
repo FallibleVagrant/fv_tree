@@ -1,0 +1,316 @@
+pre {
+	font-weight: bold;
+	font-size: 1.5em;
+	padding: 0;
+	margin: 0;
+	text-align: center;
+
+	filter: opacity(0%);
+	animation: 4s ease-out 4s appear;
+	animation-fill-mode: forwards;
+}
+
+@keyframes appear {
+	0% {
+		filter: opacity(0%);
+	}
+
+	100% {
+		filter: opacity(100%);
+	}
+}
+
+/* Branches are the things that point to the links when you hover them. */
+.branch-container {
+	position: relative;
+	width: 0px;
+	height: 0px;
+	margin: 0px;
+	padding: 0px;
+
+	/* Invisible by default. */
+	filter: opacity(0%);
+	/* Smooth transition, similar to button color inversion. */
+	transition: filter 0.3s ease-out;*/
+}
+
+a:hover + .branch-container {
+	filter: opacity(100%);
+}
+
+/* The pre elements themselves!
+ * Each is given a hand-picked location via id. */
+.branch {
+	position: absolute;
+	bottom: 10rem;
+	right: 14rem;
+	width: 0px;
+	height: 0px;
+	margin: 0px;
+	padding: 0px;
+}
+
+#random-branch {
+	right: 14.2rem;
+	bottom: 3rem;
+}
+
+#editor-branch {
+	right: 14.2rem;
+	bottom: 2.9rem;
+}
+
+#about-branch {
+	bottom: 3.8rem;
+}
+
+#placeholder-branch {
+	bottom: 3.5rem;
+}
+
+.small-sway {
+	display: inline-block;
+	animation: 10s cubic-bezier(0.45, 0.05, 0.55, 0.95) 0s small-sway;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+}
+
+@keyframes small-sway {
+	0% {
+		transform: translate(-0.1rem, 0) skew(1deg);
+	}
+
+	100% {
+		transform: translate(0.1rem, 0) skew(-1deg);
+	}
+}
+
+.medium-sway {
+	display: inline-block;
+	animation: 10s cubic-bezier(0.45, 0.05, 0.55, 0.95) 0s medium-sway;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+}
+
+.medium-up-sway {
+	display: inline-block;
+	animation:
+	10s cubic-bezier(0.45, 0.05, 0.55, 0.95) 0s medium-sway,
+	10s cubic-bezier(0.45, 0.05, 0.55, 0.95) 0s up-sway;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+	animation-composition: add;
+}
+
+@keyframes medium-sway {
+	0% {
+		transform: translate(-0.3rem, 0) skew(2deg);
+	}
+
+	100% {
+		transform: translate(0.3rem, 0) skew(-2deg);
+	}
+}
+
+@keyframes up-sway {
+	0% {
+		transform: translate(0rem, 0.3rem);
+	}
+
+	100% {
+		transform: translate(0rem, -0.3rem);
+	}
+}
+
+.leaf-sway {
+	display: inline-block;
+	animation:
+	10s cubic-bezier(0.45, 0.05, 0.55, 0.95) 0s leaf-sway,
+	2s cubic-bezier(0.45, 0.05, 0.55, 0.95) 0s leaf-rustle;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+	animation-composition: add;
+}
+
+@keyframes leaf-sway {
+	0% {
+		transform: translate(-0.4rem, 0) skew(3deg);
+	}
+
+	100% {
+		transform: translate(0.4rem, 0) skew(-3deg);
+	}
+}
+
+@keyframes leaf-rustle {
+	0% {
+		/*transform: translate(0.1rem, -0.1rem) skew(2deg);*/
+	}
+
+	100% {
+		/*transform: translate(-0.1rem, 0.1rem) skew(-2deg);*/
+	}
+}
+
+.leaf-sway-contravening {
+	display: inline-block;
+	animation:
+	9s cubic-bezier(0.65, 0.05, 0.36, 1) 0s leaf-sway,
+	2s cubic-bezier(0.45, 0.05, 0.55, 0.95) 0s leaf-rustle;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+	animation-composition: add;
+}
+
+.leaf-sway-contravening-up-sway {
+	display: inline-block;
+	animation: 9s cubic-bezier(0.65, 0.05, 0.36, 1) 0s gentler-leaf-up-sway;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+}
+
+@keyframes gentler-leaf-up-sway {
+	0% {
+		transform: translate(-0.4rem, 0.2rem) skew(2deg);
+	}
+
+	100% {
+		transform: translate(0.4rem, -0.2rem) skew(-2deg);
+	}
+}
+
+/* This is for the leaves that blow off of the tree. */
+.leaf-blow {
+	display: inline-block;
+	height: 0px;
+	/* We use color here to make them invisible at first, */
+	color: transparent;
+	/* ...because for some reason this makes them invisible forever. */
+	/* filter: opacity(0%); */
+}
+
+@keyframes leaf-blow {
+	0% {
+		/* Set to be visible via color. */
+		color: #eee;
+		transform: translate(0rem, 0rem) skew(-2deg) rotate(30deg) scale(1.3, 1);
+		filter: opacity(0%);
+	}
+
+	10% {
+		filter: opacity(100%);
+	}
+
+	30% {
+		transform: translate(2rem, -1.5rem) skew(2deg) rotate(80deg) scale(1, 0.5);
+	}
+
+	70% {
+		filter: opacity(100%);
+		transform: translate(6rem, -4.5rem) skew(4deg) rotate(120deg) scale(1.1, -0.3);
+	}
+
+	100% {
+		filter: opacity(0%);
+		transform: translate(8rem, -6rem) skew(-3deg) rotate(200deg) scale(1, -1);
+	}
+}
+
+@keyframes leaf-blow-contravening {
+	0% {
+		/* Set to be visible via color. */
+		color: #eee;
+		transform: translate(0rem, 0rem) skew(0deg) rotate(-120deg) scale(0.5, 0.1);
+		filter: opacity(0%);
+	}
+
+	10% {
+		filter: opacity(100%);
+	}
+
+	30% {
+		transform: translate(4rem, -3rem) skew(5deg) rotate(90deg) scale(0.9, 0.3);
+	}
+
+	70% {
+		filter: opacity(100%);
+		transform: translate(8rem, -9rem) skew(10deg) rotate(50deg) scale(1.2, 0.8);
+	}
+
+	100% {
+		filter: opacity(0%);
+		transform: translate(12rem, -12rem) skew(-5deg) rotate(-10deg) scale(1, 1);
+	}
+}
+
+#leaf-one {
+	transform: translate(3rem, -13rem);
+	animation: 10s linear 7s leaf-blow;
+	animation-iteration-count: infinite;
+	animation-direction: forwards;
+	animation-composition: add;
+}
+
+#leaf-two {
+	transform: translate(-0.9rem, -12rem);
+	animation: 7.2s linear 12s leaf-blow-contravening;
+	animation-iteration-count: infinite;
+	animation-direction: forwards;
+	animation-composition: add;
+}
+
+#leaf-three {
+	transform: translate(-2.3rem, -15rem);
+	animation: 9.5s linear 13s leaf-blow-contravening;
+	animation-iteration-count: infinite;
+	animation-direction: forwards;
+	animation-composition: add;
+}
+
+#leaf-four {
+	transform: translate(-2.1rem, -18rem);
+	animation: 11s linear 28.5s leaf-blow;
+	animation-iteration-count: infinite;
+	animation-direction: forwards;
+	animation-composition: add;
+}
+
+#leaf-five {
+	transform: translate(1.5rem, -22rem);
+	animation: 7s linear 22s leaf-blow;
+	animation-iteration-count: infinite;
+	animation-direction: forwards;
+	animation-composition: add;
+}
+
+#leaf-six {
+	transform: translate(1.4rem, -23rem);
+	animation: 7.7s linear 19.5s leaf-blow;
+	animation-iteration-count: infinite;
+	animation-direction: forwards;
+	animation-composition: add;
+}
+
+#leaf-seven {
+	transform: translate(1.7rem, -25rem);
+	animation: 8.2s linear 27s leaf-blow-contravening;
+	animation-iteration-count: infinite;
+	animation-direction: forwards;
+	animation-composition: add;
+}
+
+#leaf-eight {
+	transform: translate(-1.5rem, -14.5rem);
+	animation: 9.3s linear 21.5s leaf-blow-contravening;
+	animation-iteration-count: infinite;
+	animation-direction: forwards;
+	animation-composition: add;
+}
+
+#leaf-nine {
+	transform: translate(-1.9rem, -18rem);
+	animation: 7.5s linear 15.3s leaf-blow;
+	animation-iteration-count: infinite;
+	animation-direction: forwards;
+	animation-composition: add;
+}
