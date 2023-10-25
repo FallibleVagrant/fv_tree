@@ -8,6 +8,10 @@ pre {
 	filter: opacity(0%);
 	animation: 4s ease-out 4s appear;
 	animation-fill-mode: forwards;
+
+	/* Prevent pre from creating unnecessary scroll bar on smaller screen sizes. */
+	overflow-clip-margin: 300px;
+	overflow: clip;
 }
 
 @keyframes appear {
@@ -34,8 +38,11 @@ pre {
 	transition: filter 0.3s ease-out;*/
 }
 
-a:hover + .branch-container {
-	filter: opacity(100%);
+/* Branches pointing to buttons only appear on desktop. */
+@media (min-width: 600px) {
+	a:hover + .branch-container {
+		filter: opacity(100%);
+	}
 }
 
 /* The pre elements themselves!

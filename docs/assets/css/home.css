@@ -22,9 +22,16 @@ body {
 #two-column {
 	display: grid;
 	grid-template-columns: 0% 100%;
+}
 
-	animation: 1.5s cubic-bezier(0.65, 0.05, 0.36, 1) 3s slide_right;
-	animation-fill-mode: forwards;
+@media (min-width: 600px) {
+	#two-column {
+		display: grid;
+		grid-template-columns: 0% 100%;
+
+		animation: 1.5s cubic-bezier(0.65, 0.05, 0.36, 1) 3s slide_right;
+		animation-fill-mode: forwards;
+	}
 }
 
 @keyframes slide_right {
@@ -60,7 +67,7 @@ a {
 	text-decoration: none;
 	font-weight: bold;
 	font-size: 1.5rem;
-	border: 1px solid #0a0a0a;
+	/*border: 1px solid #0a0a0a;*/
 	padding: 0.5rem 0.75rem;
 
 	/* Color inversion on hover. */
@@ -75,6 +82,13 @@ a:hover {
 	color: #333;
 }
 
+/* When buttons overlay the home-tree, set an outline so it is still legible. */
+@media (max-width: 450px) {
+	a {
+		text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+	}
+}
+
 a:active {
 	filter: blur(10px) opacity(0%);
 }
@@ -87,4 +101,11 @@ a:active {
 .disabled:hover {
 	background-color: #500;
 	color: #e00;
+}
+
+/* When buttons overlay the home-tree, set an outline so it is still legible. */
+@media (max-width: 450px) {
+	.disabled {
+		text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+	}
 }
