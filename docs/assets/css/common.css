@@ -18,7 +18,7 @@ p a {
 /* Add external link image when opening to new tab. */
 p a[target="_blank"]::after {
 	content: "";
-	mask-image: url('../assets/img/icons8-external-link.svg');
+	mask-image: url('../img/icons8-external-link.svg');
 	mask-size: cover;
 	display: inline-flex;
 	background-color: seagreen;
