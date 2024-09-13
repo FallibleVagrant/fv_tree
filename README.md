@@ -36,3 +36,5 @@ A: *It's in development.*
 
 You may find the website here: [https://falliblevagrant.github.io/fvtree](https://falliblevagrant.github.io/fvtree)
 for a bit more information and to see some random trees.
+
+Future development will be on Codeberg [https://codeberg.org/FallibleVagrant/fvtree](https://codeberg.org/FallibleVagrant/fvtree).
